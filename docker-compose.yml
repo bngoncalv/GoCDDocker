@@ -1,0 +1,16 @@
+go-server:
+  image: gocd/gocd-server:v18.5.0
+  ports:
+    - '8153:8153'
+    - '8154:8154'
+  volumes:
+    - /tmp/go:/home/go
+
+gocd-agent-node:
+  build: ./agents/
+  links:
+    - go-server
+  environment:
+    GO_SERVER_URL: https://go-server:8154/go
+    AGENT_AUTO_REGISTER_KEY: '388b633a88de126531afa41eff9aa69e'
+  dockerfile: Dockerfile.node

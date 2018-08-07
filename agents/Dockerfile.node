@@ -1,0 +1,26 @@
+FROM gocd/gocd-agent-ubuntu-16.04:v18.6.0
+
+USER root
+
+# install packages
+RUN (curl --silent --location https://deb.nodesource.com/setup_8.x | bash -) \
+    && apt-get update \
+    && apt-get install -y \
+        aufs-tools \
+        build-essential \
+        nodejs \
+        parallel \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && npm install -g npm@next \
+    && npm install -g npm-cache@latest
+
+RUN apt-get update
+RUN apt-get install -y python-dev
+RUN curl -O https://bootstrap.pypa.io/get-pip.py 
+RUN python get-pip.py 
+RUN pip install awscli --upgrade
+
+# copy auto register to agent file
+COPY autoregister.properties ./go-agent/config/autoregister.properties
+
